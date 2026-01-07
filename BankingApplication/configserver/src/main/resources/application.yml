@@ -1,0 +1,44 @@
+server:
+  port: 8071
+spring:
+  application:
+    name: "configserver"
+  profiles:
+    #active: native
+   active: git
+  cloud:
+    config:
+      server:
+        #native:
+          #search-locations: "file:///C:/Users/SatyamKhare/OneDrive - EPAM/Java Concepts/Microservices/Section6/Configurations"
+          #search-locations: "classpath:/config"
+       git:
+         uri: "https://github.com/khare519/Microservices_Config.git"
+         default-label: main
+         clone-on-start: true
+         force-pull: true
+         timeout: 5
+encrypt:
+  key: "45D81EC1EF61DF9AD8D3E5BB397F9"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
