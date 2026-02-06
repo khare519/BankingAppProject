@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS accountsdb;
+    CREATE DATABASE IF NOT EXISTS loansdb;
+    CREATE DATABASE IF NOT EXISTS cardsdb;
+
+    CREATE USER IF NOT EXISTS 'eazybank'@'%' IDENTIFIED BY 'eazybank';
+    GRANT ALL PRIVILEGES ON accountsdb.* TO 'eazybank'@'%';
+    GRANT ALL PRIVILEGES ON loansdb.* TO 'eazybank'@'%';
+    GRANT ALL PRIVILEGES ON cardsdb.* TO 'eazybank'@'%';
+    FLUSH PRIVILEGES;

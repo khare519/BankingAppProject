@@ -10,7 +10,7 @@ replicaCount: 1
 
 image:
   repository: satyam519/message
-  tag: s17
+  tag: s18
 
 containerPort: 9010
 

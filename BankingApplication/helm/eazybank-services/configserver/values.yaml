@@ -10,7 +10,7 @@ replicaCount: 1
 
 image:
   repository: satyam519/configserver
-  tag: s17
+  tag: s18
 
 containerPort: 8071
 

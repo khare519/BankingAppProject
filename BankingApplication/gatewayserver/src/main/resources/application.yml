@@ -2,7 +2,7 @@ spring:
   application:
     name: "gatewayserver"
   config:
-    import: "optional:configserver:http://localhost:8071/"
+    import: "optional:configserver:http://configserver:8071/"
   cloud:
     gateway:
       httpclient:
@@ -27,6 +27,9 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: "http://localhost:7080/realms/master/protocol/openid-connect/certs"
+  devtools:
+    livereload:
+      enabled: false
 management:
   endpoints:
     web:
@@ -63,4 +66,16 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 2
         failure-rate-threshold: 50
         wait-duration-in-open-state: 10000
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    urls:
+      - name: Accounts Service
+        url: /eazybank/accounts/v3/api-docs
+      - name: Cards Service
+        url: /eazybank/cards/v3/api-docs
+      - name: Loans Service
+        url: /eazybank/loans/v3/api-docs
+
 

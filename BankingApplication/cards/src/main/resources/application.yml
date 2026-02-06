@@ -4,26 +4,26 @@ spring:
   application:
     name: "cards"
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: ''
-  h2:
-    console:
-      enabled: true
+    url: jdbc:mysql://mysql:3306/cardsdb
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: eazybank
+    password: eazybank
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
   config:
-    import: "optional:configserver:http://localhost:8071/"
+    import: "optional:configserver:http://configserver:8071/"
   cloud:
     kubernetes:
       discovery:
         all-namespaces: true
   profiles:
     active: "prod"
+  devtools:
+    livereload:
+      enabled: false
 management:
   endpoints:
     web:

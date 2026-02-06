@@ -1,0 +1,477 @@
+---
+# Source: prod-env/charts/message/templates/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-deployment
+  labels:
+    app: message
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: message
+  template:
+    metadata:
+      labels:
+        app: message
+    spec:
+      containers:
+        - name: message
+          image: "satyam519/message:s18"
+          ports:
+            - containerPort: 9010
+              protocol: TCP
+          env:
+          - name: SPRING_APPLICATION_NAME
+            value: message
+          - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+          { { - if .Values.resources } }
+          resources:
+          { { toYaml .Values.resources | nindent 12 } }
+          { { - end } }
+---
+# Source: prod-env/charts/configserver/templates/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: configserver
+spec:
+  selector:
+    app: configserver
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8071
+      targetPort: 8071
+---
+# Source: prod-env/charts/cards/templates/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cards-deployment
+  labels:
+    app: cards
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cards
+  template:
+    metadata:
+      labels:
+        app: cards
+    spec:
+      containers:
+        - name: cards
+          image: "satyam519/cards:s18"
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          env:
+          - name: SPRING_APPLICATION_NAME
+            value: cards
+          - name: SPRING_PROFILES_ACTIVE
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_PROFILES_ACTIVE
+          - name: SPRING_CONFIG_IMPORT
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_CONFIG_IMPORT
+          - name: SPRING.CLOUD.KUBERNETES.DISCOVERY.DISCOVERY-SERVER-URL
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING.CLOUD.KUBERNETES.DISCOVERY.DISCOVERY-SERVER-URL
+          - name: JAVA_TOOL_OPTIONS
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: JAVA_TOOL_OPTIONS
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_EXPORTER_OTLP_ENDPOINT
+          - name: OTEL_METRICS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_METRICS_EXPORTER
+          - name: OTEL_LOGS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_LOGS_EXPORTER
+          - name: OTEL_SERVICE_NAME
+            value: cards
+          { { - if .Values.resources } }
+          resources:
+          { { toYaml .Values.resources | nindent 12 } }
+          { { - end } }
+---
+# Source: prod-env/charts/accounts/templates/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounts
+spec:
+  selector:
+    app: accounts
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+# Source: prod-env/charts/accounts/templates/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounts-deployment
+  labels:
+    app: accounts
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: accounts
+  template:
+    metadata:
+      labels:
+        app: accounts
+    spec:
+      containers:
+        - name: accounts
+          image: "satyam519/accounts:s18"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+          - name: SPRING_APPLICATION_NAME
+            value: accounts
+          - name: SPRING_PROFILES_ACTIVE
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_PROFILES_ACTIVE
+          - name: SPRING_CONFIG_IMPORT
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_CONFIG_IMPORT
+          - name: SPRING.CLOUD.KUBERNETES.DISCOVERY.DISCOVERY-SERVER-URL
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING.CLOUD.KUBERNETES.DISCOVERY.DISCOVERY-SERVER-URL
+          - name: JAVA_TOOL_OPTIONS
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: JAVA_TOOL_OPTIONS
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_EXPORTER_OTLP_ENDPOINT
+          - name: OTEL_METRICS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_METRICS_EXPORTER
+          - name: OTEL_LOGS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_LOGS_EXPORTER
+          - name: OTEL_SERVICE_NAME
+            value: accounts
+          - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+          { { - if .Values.resources } }
+          resources:
+          { { toYaml .Values.resources | nindent 12 } }
+          { { - end } }
+---
+# Source: prod-env/charts/loans/templates/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: loans
+spec:
+  selector:
+    app: loans
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8090
+      targetPort: 8090
+---
+# Source: prod-env/charts/loans/templates/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loans-deployment
+  labels:
+    app: loans
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loans
+  template:
+    metadata:
+      labels:
+        app: loans
+    spec:
+      containers:
+        - name: loans
+          image: "satyam519/loans:s18"
+          ports:
+            - containerPort: 8090
+              protocol: TCP
+          env:
+          - name: SPRING_APPLICATION_NAME
+            value: loans
+          - name: SPRING_PROFILES_ACTIVE
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_PROFILES_ACTIVE
+          - name: SPRING_CONFIG_IMPORT
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_CONFIG_IMPORT
+          - name: SPRING.CLOUD.KUBERNETES.DISCOVERY.DISCOVERY-SERVER-URL
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING.CLOUD.KUBERNETES.DISCOVERY.DISCOVERY-SERVER-URL
+          - name: JAVA_TOOL_OPTIONS
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: JAVA_TOOL_OPTIONS
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_EXPORTER_OTLP_ENDPOINT
+          - name: OTEL_METRICS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_METRICS_EXPORTER
+          - name: OTEL_LOGS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_LOGS_EXPORTER
+          - name: OTEL_SERVICE_NAME
+            value: loans
+          { { - if .Values.resources } }
+          resources:
+          { { toYaml .Values.resources | nindent 12 } }
+          { { - end } }
+---
+# Source: prod-env/charts/gatewayserver/templates/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gatewayserver
+spec:
+  selector:
+    app: gatewayserver
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8072
+      targetPort: 8072
+---
+# Source: prod-env/charts/gatewayserver/templates/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gatewayserver-deployment
+  labels:
+    app: gatewayserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gatewayserver
+  template:
+    metadata:
+      labels:
+        app: gatewayserver
+    spec:
+      containers:
+        - name: gatewayserver
+          image: "satyam519/gatewayserver:s18"
+          ports:
+            - containerPort: 8072
+              protocol: TCP
+          env:
+          - name: SPRING_APPLICATION_NAME
+            value: gatewayserver
+          - name: SPRING_PROFILES_ACTIVE
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_PROFILES_ACTIVE
+          - name: SPRING_CONFIG_IMPORT
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_CONFIG_IMPORT
+          - name: SPRING.CLOUD.KUBERNETES.DISCOVERY.DISCOVERY-SERVER-URL
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING.CLOUD.KUBERNETES.DISCOVERY.DISCOVERY-SERVER-URL
+          - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI
+          - name: JAVA_TOOL_OPTIONS
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: JAVA_TOOL_OPTIONS
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_EXPORTER_OTLP_ENDPOINT
+          - name: OTEL_METRICS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_METRICS_EXPORTER
+          - name: OTEL_LOGS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_LOGS_EXPORTER
+          - name: OTEL_SERVICE_NAME
+            value: gatewayserver
+          { { - if .Values.resources } }
+          resources:
+          { { toYaml .Values.resources | nindent 12 } }
+          { { - end } }
+---
+# Source: prod-env/charts/cards/templates/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cards
+spec:
+  selector:
+    app: cards
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+---
+# Source: prod-env/charts/message/templates/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: message
+spec:
+  selector:
+    app: message
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9010
+      targetPort: 9010
+---
+# Source: prod-env/templates/configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eazybankprod-configmap
+data:
+  SPRING_PROFILES_ACTIVE: prod
+  SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+  SPRING.CLOUD.KUBERNETES.DISCOVERY.DISCOVERY-SERVER-URL: http://spring-cloud-kubernetes-discoveryserver:80/
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: http://keycloak.default.svc.cluster.local:80/realms/master/protocol/openid-connect/certs
+  JAVA_TOOL_OPTIONS: -javaagent:/app/libs/opentelemetry-javaagent-2.11.0.jar
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo-grafana-tempo-distributor:4318
+  OTEL_METRICS_EXPORTER: none
+  OTEL_LOGS_EXPORTER: none
+  SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092
+---
+# Source: prod-env/charts/configserver/templates/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configserver-deployment
+  labels:
+    app: configserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: configserver
+  template:
+    metadata:
+      labels:
+        app: configserver
+    spec:
+      containers:
+        - name: configserver
+          image: "satyam519/configserver:s18"
+          ports:
+            - containerPort: 8071
+              protocol: TCP
+          env:
+          - name: SPRING_APPLICATION_NAME
+            value: configserver
+          - name: JAVA_TOOL_OPTIONS
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: JAVA_TOOL_OPTIONS
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_EXPORTER_OTLP_ENDPOINT
+          - name: OTEL_METRICS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_METRICS_EXPORTER
+          - name: OTEL_LOGS_EXPORTER
+            valueFrom:
+              configMapKeyRef:
+                name: eazybankprod-configmap
+                key: OTEL_LOGS_EXPORTER
+          - name: OTEL_SERVICE_NAME
+            value: configserver
+          { { - if .Values.resources } }
+          resources:
+          { { toYaml .Values.resources | nindent 12 } }
+          { { - end } }

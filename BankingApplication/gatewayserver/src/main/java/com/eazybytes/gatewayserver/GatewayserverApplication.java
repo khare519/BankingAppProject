@@ -38,17 +38,34 @@ public class GatewayserverApplication {
 										.setFallbackUri("forward:/contactSupport")))
 						.uri("http://accounts:8080"))
 				.route(p -> p
+						.path("/eazybank/accounts/v3/api-docs")
+						.filters(f -> f.rewritePath("/eazybank/accounts/v3/api-docs(?<segment>.*)", "/v3/api-docs${segment}")
+								.circuitBreaker(config -> config.setName("accountsCircuitBreaker")
+										.setFallbackUri("forward:/contactSupport")))
+						.uri("http://accounts:8080"))
+
+				.route(p -> p
 						.path("/eazybank/cards/**")
 						.filters( f -> f.rewritePath("/eazybank/cards/(?<segment>.*)","/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 								.requestRateLimiter(config -> config.setRateLimiter(redisRateLimiter()).setKeyResolver(userKeyResolver())))
-						.uri("http://loans:8090"))
+						.uri("http://cards:9000"))
+				.route(p -> p
+						.path("/eazybank/cards/v3/api-docs")
+						.filters(f -> f.rewritePath("/eazybank/cards/v3/api-docs(?<segment>.*)", "/v3/api-docs${segment}"))
+						.uri("http://cards:9000"))
+
 				.route(p -> p
 						.path("/eazybank/loans/**")
 						.filters( f -> f.rewritePath("/eazybank/loans/(?<segment>.*)","/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 								.retry(config -> config.setRetries(3).setMethods(HttpMethod.GET).setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true)))
-						.uri("http://cards:9000")).build();
+						.uri("http://loans:8090"))
+				.route(p -> p
+						.path("/eazybank/loans/v3/api-docs")
+						.filters(f -> f.rewritePath("/eazybank/loans/v3/api-docs(?<segment>.*)", "/v3/api-docs${segment}"))
+						.uri("http://loans:8090"))
+				.build();
 
 	}
 	@Bean

@@ -81,7 +81,7 @@
 				<version>3.4.6</version>
 				<configuration>
 					<to>
-						<image>satyam519/${project.artifactId}:s17</image>
+						<image>satyam519/${project.artifactId}:s18</image>
 					</to>
 				</configuration>
 			</plugin>

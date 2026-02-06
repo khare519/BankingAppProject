@@ -10,7 +10,8 @@ replicaCount: 1
 
 image:
   repository: satyam519/cards
-  tag: s17
+  tag: s18
+  pullPolicy: Always
 
 containerPort: 9000
 
@@ -18,6 +19,15 @@ service:
   type: ClusterIP
   port: 9000
   targetPort: 9000
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1024Mi"
+    cpu: "500m"
+
 
 appname_enabled: true
 profile_enabled: true

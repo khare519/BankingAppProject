@@ -18,6 +18,7 @@ spec:
       containers:
         - name: {{ .Values.appLabel }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.containerPort }}
               protocol: TCP
@@ -84,6 +85,11 @@ spec:
               configMapKeyRef:
                 name: {{ .Values.global.configMapName }}
                 key: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+          {{- end }}
+
+          {{- if .Values.resources }}
+          resources:
+          {{ toYaml .Values.resources | nindent 12 }}
           {{- end }}
 
   {{- end -}}

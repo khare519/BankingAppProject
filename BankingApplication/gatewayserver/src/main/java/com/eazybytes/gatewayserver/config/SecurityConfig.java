@@ -19,13 +19,24 @@ import reactor.core.publisher.Mono;
 public class SecurityConfig
 {
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http){
-        http.authorizeExchange(exchanges -> exchanges.pathMatchers(HttpMethod.GET).permitAll()
-                .pathMatchers("/eazybank/accounts/**").hasRole("ACCOUNTS")
-                .pathMatchers("/eazybank/cards/**").hasRole("CARDS")
-                .pathMatchers("eazybank/loans/**").hasRole("LOANS"))
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        http.authorizeExchange(exchanges -> exchanges
+                        .pathMatchers(
+                                "/swagger-ui/index.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/webjars/**",
+                                "/eazybank/accounts/v3/api-docs",
+                                "/eazybank/loans/v3/api-docs",
+                                "/eazybank/cards/v3/api-docs"
+                        ).permitAll()
+                        .pathMatchers("/eazybank/accounts/**").hasRole("ACCOUNTS")
+                        .pathMatchers("/eazybank/cards/**").hasRole("CARDS")
+                        .pathMatchers("/eazybank/loans/**").hasRole("LOANS")
+                        .anyExchange().authenticated()
+                )
                 .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec.jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesConverter())));
-        http.csrf(csrfSpec ->  csrfSpec.disable());
+        http.csrf(csrfSpec -> csrfSpec.disable());
         return http.build();
     }
 

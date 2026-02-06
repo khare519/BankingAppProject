@@ -6,20 +6,17 @@ spring:
   profiles:
     active: "prod"
   datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ''
-  h2:
-    console:
-      enabled: true
+    url: jdbc:mysql://mysql:3306/accountsdb
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: eazybank
+    password: eazybank
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
   config:
-    import: "optional:configserver:http://localhost:8071/"
+    import: "optional:configserver:http://configserver:8071/"
   cloud:
     kubernetes:
       discovery:
@@ -40,6 +37,9 @@ spring:
             - localhost:9092
     function:
       definition: updateCommunication
+  devtools:
+    livereload:
+      enabled: false
 management:
   endpoints:
     web:
@@ -101,5 +101,7 @@ resilience4j:
         timeout-duration: 1000
         limit-refresh-period: 5000
         limit-for-period: 1
+
+
 
 

@@ -1,0 +1,26 @@
+deploymentName: mysql
+appLabel: mysql
+
+replicaCount: 1
+
+image:
+  repository: mysql
+  tag: "8.0"
+
+containerPort: 3306
+
+serviceName: mysql
+service:
+  type: ClusterIP
+  port: 3306
+  targetPort: 3306
+
+mysql:
+  rootPassword: root
+  username: eazybank
+  password: eazybank
+
+  databases:
+    - accountsdb
+    - loansdb
+    - cardsdb

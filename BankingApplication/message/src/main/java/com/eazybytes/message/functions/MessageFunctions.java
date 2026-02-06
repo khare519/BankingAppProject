@@ -17,7 +17,7 @@ public class MessageFunctions {
     public Function<AccountsMsgDto, AccountsMsgDto> email() {
         return accountsMsgDto -> {
            log.info("Sending email with the details :"+accountsMsgDto.toString());
-           return accountsMsgDto;
+            return accountsMsgDto;
         };
     }
     @Bean
