@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -33,6 +34,7 @@ public class AccountsServiceImpl implements IAccountsService
   private AccountsRepository accountsRepository;
   private final StreamBridge streamBridge;
 
+    @Transactional
     @Override
     public void createAccount(CustomerDto customerDto) {
         Customer customer =CustomerMapper.mapToCustomer(customerDto,new Customer());
@@ -74,6 +76,7 @@ public class AccountsServiceImpl implements IAccountsService
         customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(account,new AccountsDto()));
         return customerDto;
     }
+    @Transactional
     public boolean updateAccount(CustomerDto customerDto) {
         boolean isAccountUpdated = false;
         AccountsDto accountsDto = customerDto.getAccountsDto();
